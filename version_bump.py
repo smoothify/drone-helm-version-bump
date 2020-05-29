@@ -3,22 +3,12 @@ import os
 import io
 import click
 from ruamel.yaml import YAML
-import ast
 
 
 class ImageTag(enum.Enum):
     NotFound = 0
     Found = 1
     Updated = 2
-
-
-class PythonLiteralOption(click.Option):
-
-    def type_cast_value(self, ctx, value):
-        try:
-            return ast.literal_eval(value)
-        except:
-            raise click.BadParameter(value)
 
 
 yaml = YAML(typ='rt')
@@ -145,6 +135,7 @@ def process_image(values, images, version) -> ImageTag:
 
     return ImageTag.NotFound
 
+
 def process_count(state: ImageTag, found: int, updated: int) -> [int, int]:
     if state == ImageTag.Updated:
         found += 1
@@ -188,15 +179,20 @@ def save_values_file(filename: str, values):
 @click.command()
 @click.option('--working-dir', required=True, type=click.Path(file_okay=False, exists=True, resolve_path=True))
 @click.option('--values-file', default="values.yaml", type=str)
-@click.option('--images', required=True, cls=PythonLiteralOption, default="[]")
+@click.option('--image', required=True, type=str)
 @click.option('--version', type=str)
 @click.option('--version-file', type=click.File('rb'))
 @click.option('--error-no-release', default=False, type=bool)
 @click.option('--error-no-tags', default=True, type=bool)
-def bump(working_dir: str, values_file: str, images: [str], version: str, version_file: io.BufferedReader,
+def bump(working_dir: str, values_file: str, image: str, version: str, version_file: io.BufferedReader,
          error_no_release: bool, error_no_tags: bool):
     if not version and version_file is not None:
         version = version_file.readline().decode().strip()
+
+    images = image.lstrip("[").rstrip("]").replace('"','').replace("'",'').split(",")
+
+    if len(images) == 0:
+        raise click.BadParameter("No valid images specified")
 
     if not valid_string(version):
         if error_no_release:
