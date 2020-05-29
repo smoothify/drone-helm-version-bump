@@ -188,7 +188,7 @@ def save_values_file(filename: str, values):
 @click.command()
 @click.option('--working-dir', required=True, type=click.Path(file_okay=False, exists=True, resolve_path=True))
 @click.option('--values-file', default="values.yaml", type=str)
-@click.option('--images', required=True, cls=PythonLiteralOption, default=[])
+@click.option('--images', required=True, cls=PythonLiteralOption, default="[]")
 @click.option('--version', type=str)
 @click.option('--version-file', type=click.File('rb'))
 @click.option('--error-no-release', default=False, type=bool)
@@ -201,6 +201,8 @@ def bump(working_dir: str, values_file: str, images: [str], version: str, versio
     if not valid_string(version):
         if error_no_release:
             raise click.MissingParameter(param_type="version")
+        else:
+            print(f'No version found, skipping...')
     else:
         print(f'Initializing version bump for {version}...')
         print(f'Moving to working directory {working_dir}...')
