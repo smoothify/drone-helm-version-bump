@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/smoothify/drone-helm-version-bump/compare/v0.1.1...v0.2.0) (2020-08-19)
+
+
+### Features
+
+* add support for setting chart and app versions ([93767d5](https://github.com/smoothify/drone-helm-version-bump/commit/93767d5fb13b0574448532ed08e18ed57d797b05))
+
 ## [0.1.1](https://github.com/smoothify/drone-helm-version-bump/compare/v0.1.0...v0.1.1) (2020-08-18)
 
 
